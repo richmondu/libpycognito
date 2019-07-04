@@ -3,6 +3,18 @@
 libpycognito demonstrates using Amazon Cognito using Python.
 
 
+### Flow:
+
+	1. signup (will receive email containing confirmation code)
+	2. confirm signup (use confirmation code)
+	3. login, logout
+	4. update profile
+	5. initiate forgot password (will receive email containing confirmation code)
+	6. confirm forgot password (use confirmation code)
+	7. login_ex (returns access token with id token and refresh token)
+	8. verify access token which is to be passed for succeeding api calls
+
+
 ### Instructions:
 
     1. Setup Amazon Cognito account
