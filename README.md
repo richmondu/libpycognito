@@ -29,4 +29,6 @@ libpycognito demonstrates using Amazon Cognito using Python.
        pip install -r requirements.txt
 
 
+### References:
 
+https://github.com/capless/warrant
