@@ -7,6 +7,7 @@ Amazon Cognito scales to millions of users and supports sign-in with social iden
 such as Facebook, Google, and Amazon, and enterprise identity providers via SAML 2.0.
 
 The sample application is just a console application. Need to integrate to Flask to make it a browser application.
+That part should be quite easy since it is just UI.
 
 
 ### Flow:
