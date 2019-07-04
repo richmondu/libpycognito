@@ -31,4 +31,7 @@ libpycognito demonstrates using Amazon Cognito using Python.
 
 ### References:
 
+https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp.html
 https://github.com/capless/warrant
+
