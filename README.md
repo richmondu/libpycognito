@@ -39,8 +39,6 @@ libpycognito demonstrates using Amazon Cognito using Python.
     
     3. Install Python libraries
        pip install -r requirements.txt
-
-    4. Run cognito_app.py
     
 
 ### References:
