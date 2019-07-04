@@ -6,6 +6,8 @@ Amazon Cognito lets you add user sign-up, sign-in, and access control to your we
 Amazon Cognito scales to millions of users and supports sign-in with social identity providers, 
 such as Facebook, Google, and Amazon, and enterprise identity providers via SAML 2.0.
 
+The sample application is just a console application. Need to integrate to Flask to make it a browser application.
+
 
 ### Flow:
 
