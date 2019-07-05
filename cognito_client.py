@@ -348,3 +348,16 @@ class CognitoClient:
 			print("  modifieddate : {}".format(group["modifieddate"]))
 			print("  creationdate : {}".format(group["creationdate"]))
 			print()
+
+	def admin_logout_user(self, username):
+		params = {
+			'UserPoolId': self.pool_id,
+			'Username'  : username
+		}
+		try:
+			response = self.__get_client().admin_user_global_sign_out(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
+

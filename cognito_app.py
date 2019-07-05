@@ -164,7 +164,7 @@ def test_admin():
 		# list users
 		#################################################################
 		if True:
-			print("\r\nlist_users")
+			print("\r\nadmin_list_users")
 			(result, users) = cg.admin_list_users()
 			print(result)
 			print(len(users))
@@ -175,7 +175,7 @@ def test_admin():
 		# disable user
 		#################################################################
 		if True:
-			print("\r\ndisable_user")
+			print("\r\nadmin_disable_user")
 			username = "richmondu"
 			(result, users) = cg.admin_disable_user(username)
 			print(result)
@@ -188,7 +188,7 @@ def test_admin():
 		# enable user
 		#################################################################
 		if True:
-			print("\r\nenable_user")
+			print("\r\nadmin_enable_user")
 			username = "richmondu"
 			(result, users) = cg.admin_enable_user(username)
 			print(result)
@@ -201,7 +201,7 @@ def test_admin():
 		# list groups for user
 		#################################################################
 		if True:
-			print("\r\nlist_groups_for_user")
+			print("\r\nadmin_list_groups_for_user")
 			username = "richmondu"
 			(result, groups) = cg.admin_list_groups_for_user(username)
 			print(result)
@@ -212,7 +212,7 @@ def test_admin():
 		# add user to group
 		#################################################################
 		if True:
-			print("\r\nadd_user_to_group")
+			print("\r\nadmin_add_user_to_group")
 			username = "richmondu"
 			groupname = "PaidUsersGroup"
 			(result, response) = cg.admin_add_user_to_group(username, groupname)
@@ -226,7 +226,7 @@ def test_admin():
 		# remove user from group
 		#################################################################
 		if True:
-			print("\r\nremove_user_from_group")
+			print("\r\nadmin_remove_user_from_group")
 			username = "richmondu"
 			groupname = "PaidUsersGroup"
 			(result, response) = cg.admin_remove_user_from_group(username, groupname)
@@ -234,6 +234,16 @@ def test_admin():
 
 			(result, groups) = cg.admin_list_groups_for_user(username)
 			cg.admin_display_groups_for_user(groups)
+
+
+		#################################################################
+		# logout user
+		#################################################################
+		if True:
+			print("\r\nadmin_logout_user")
+			username = "richmondu"
+			(result, response) = cg.admin_logout_user(username)
+			print(result)
 
 
 
@@ -260,6 +270,7 @@ def test_admin():
 # 4. list groups for user
 # 5. add user to group (users who upgraded from free-tier can be transferred to subscription-tier group)
 # 6. remove user from group
+# 7. logout a user
 #
 #####################################################################
 def main(args):
