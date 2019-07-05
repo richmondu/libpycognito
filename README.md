@@ -21,7 +21,7 @@ That part should be quite easy since it is just UI.
 	7. update profile (use access token)
 	8. change password (use access token)
 	9. verify access token which is to be passed for succeeding api calls
-
+	10. logout
 
 ### Instructions:
 
