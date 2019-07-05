@@ -258,16 +258,17 @@ class CognitoClient:
 
 	def admin_display_users(self, users):
 		print()
-		for user in users:
-			print("username       : {}".format(user["username"]))
-			print("  email        : {}".format(user["email"]))
-			print("  given_name   : {}".format(user["given_name"]))
-			print("  family_name  : {}".format(user["family_name"]))
-			print("  creationdate : {}".format(user["creationdate"]))
-			print("  modifieddate : {}".format(user["modifieddate"]))
-			print("  enabled      : {}".format(user["enabled"]))
-			print("  status       : {}".format(user["status"]))
-			print()
+		if users:
+			for user in users:
+				print("username       : {}".format(user["username"]))
+				print("  email        : {}".format(user["email"]))
+				print("  given_name   : {}".format(user["given_name"]))
+				print("  family_name  : {}".format(user["family_name"]))
+				print("  creationdate : {}".format(user["creationdate"]))
+				print("  modifieddate : {}".format(user["modifieddate"]))
+				print("  enabled      : {}".format(user["enabled"]))
+				print("  status       : {}".format(user["status"]))
+				print()
 
 	def admin_disable_user(self, username):
 		params = {
@@ -342,12 +343,13 @@ class CognitoClient:
 
 	def admin_display_groups_for_user(self, groups):
 		print()
-		for group in groups:
-			print("groupname      : {}".format(group["groupname"]))
-			print("  description  : {}".format(group["description"]))
-			print("  modifieddate : {}".format(group["modifieddate"]))
-			print("  creationdate : {}".format(group["creationdate"]))
-			print()
+		if groups:
+			for group in groups:
+				print("groupname      : {}".format(group["groupname"]))
+				print("  description  : {}".format(group["description"]))
+				print("  modifieddate : {}".format(group["modifieddate"]))
+				print("  creationdate : {}".format(group["creationdate"]))
+				print()
 
 	def admin_logout_user(self, username):
 		params = {
