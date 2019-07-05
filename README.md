@@ -10,8 +10,9 @@ The sample application is just a console application. Need to integrate to Flask
 That part should be quite easy since it is just UI.
 
 
-### Flow:
+### Features:
 
+        user
 	1. signup (will receive email containing confirmation code)
 	2. confirm signup (use confirmation code)
 	3. forgot password (will receive email containing confirmation code)
@@ -22,6 +23,15 @@ That part should be quite easy since it is just UI.
 	8. change password (use access token)
 	9. verify access token which is to be passed for succeeding api calls
 	10. logout
+
+	admin
+	1. list users
+	2. disable user
+	3. enable user
+	4. list groups for user
+	5. add user to group (users who upgraded from free-tier can be transferred to subscription-tier group)
+	6. remove user from group
+
 
 ### Instructions:
 
