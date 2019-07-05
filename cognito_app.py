@@ -11,23 +11,7 @@ import sys
 
 
 
-#####################################################################
-#
-# Demonstrate Amazon Cognito in console
-#
-# 1. signup (will receive email containing confirmation code)
-# 2. confirm signup (use confirmation code)
-# 3. forgot password (will receive email containing confirmation code)
-# 4. config forgot password (use confirmation code)
-# 5. login (will return access token)
-# 6. get user profile (use access token)
-# 7. update profile (use access token)
-# 8. change password (use access token)
-# 9. verify access token which is to be passed for succeeding api calls
-# 10. logout
-#
-#####################################################################
-def main(args):
+def test_user():
 
 	#################################################################
 	# init
@@ -91,7 +75,7 @@ def main(args):
 	#################################################################
 	if True:
 		print("\r\nlogin")
-		(result, response, client) = cg.login(username, password)
+		(result, response) = cg.login(username, password)
 		print(result)
 		if not result:
 			return
@@ -99,8 +83,6 @@ def main(args):
 		refresh_token = response['AuthenticationResult']['RefreshToken']
 		id_token = response['AuthenticationResult']['IdToken']
 		print(access_token)
-		#print(refresh_token)
-		#print(id_token)
 
 		#################################################################
 		# get user profile
@@ -150,6 +132,140 @@ def main(args):
 			print("\r\nlogout")
 			(result, response) = cg.logout(access_token)
 			print(result)
+
+
+def test_admin():
+
+	#################################################################
+	email       = 'richmond.umagat@yahoo.com'
+	username    = 'admin'
+	password    = 'P@$$w0rd'
+	first_name  = 'admin'
+	last_name   = 'admin'
+	cg = CognitoClient()
+
+
+	#################################################################
+	# login
+	#################################################################
+	if True:
+		print("\r\nlogin")
+		(result, response) = cg.login(username, password)
+		print(result)
+		if not result:
+			return
+		access_token = response['AuthenticationResult']['AccessToken']
+		refresh_token = response['AuthenticationResult']['RefreshToken']
+		id_token = response['AuthenticationResult']['IdToken']
+		print(access_token)
+
+
+		#################################################################
+		# list users
+		#################################################################
+		if True:
+			print("\r\nlist_users")
+			(result, users) = cg.admin_list_users()
+			print(result)
+			print(len(users))
+			cg.admin_display_users(users)
+
+
+		#################################################################
+		# disable user
+		#################################################################
+		if True:
+			print("\r\ndisable_user")
+			username = "richmondu"
+			(result, users) = cg.admin_disable_user(username)
+			print(result)
+
+			(result, users) = cg.admin_list_users()
+			cg.admin_display_users(users)
+
+
+		#################################################################
+		# enable user
+		#################################################################
+		if True:
+			print("\r\nenable_user")
+			username = "richmondu"
+			(result, users) = cg.admin_enable_user(username)
+			print(result)
+
+			(result, users) = cg.admin_list_users()
+			cg.admin_display_users(users)
+
+
+		#################################################################
+		# list groups for user
+		#################################################################
+		if True:
+			print("\r\nlist_groups_for_user")
+			username = "richmondu"
+			(result, groups) = cg.admin_list_groups_for_user(username)
+			print(result)
+			cg.admin_display_groups_for_user(groups)
+
+
+		#################################################################
+		# add user to group
+		#################################################################
+		if True:
+			print("\r\nadd_user_to_group")
+			username = "richmondu"
+			groupname = "PaidUsersGroup"
+			(result, response) = cg.admin_add_user_to_group(username, groupname)
+			print(result)
+
+			(result, groups) = cg.admin_list_groups_for_user(username)
+			cg.admin_display_groups_for_user(groups)
+
+
+		#################################################################
+		# remove user from group
+		#################################################################
+		if True:
+			print("\r\nremove_user_from_group")
+			username = "richmondu"
+			groupname = "PaidUsersGroup"
+			(result, response) = cg.admin_remove_user_from_group(username, groupname)
+			print(result)
+
+			(result, groups) = cg.admin_list_groups_for_user(username)
+			cg.admin_display_groups_for_user(groups)
+
+
+
+#####################################################################
+#
+# Demonstrate Amazon Cognito in console
+#
+# test_user
+# 1. signup (will receive email containing confirmation code)
+# 2. confirm signup (use confirmation code)
+# 3. forgot password (will receive email containing confirmation code)
+# 4. config forgot password (use confirmation code)
+# 5. login (will return access token)
+# 6. get user profile (use access token)
+# 7. update profile (use access token)
+# 8. change password (use access token)
+# 9. verify access token which is to be passed for succeeding api calls
+# 10. logout
+#
+# test_admin
+# 1. list users
+# 2. disable user
+# 3. enable user
+# 4. list groups for user
+# 5. add user to group (users who upgraded from free-tier can be transferred to subscription-tier group)
+# 6. remove user from group
+#
+#####################################################################
+def main(args):
+
+	#test_user()
+	test_admin()
 
 
 def parse_arguments(argv):
