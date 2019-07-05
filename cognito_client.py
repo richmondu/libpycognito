@@ -120,8 +120,8 @@ class CognitoClient:
 			response = aws.authenticate_user()
 			(self.keys, self.keys_iss) = self.__get_userpool_keys()
 		except:
-			return (False, None, None)
-		return (self.__get_result(response), response, client)
+			return (False, None)
+		return (self.__get_result(response), response)
 
 	def logout(self, access_token):
 		params = {
@@ -226,3 +226,125 @@ class CognitoClient:
 		return True
 
 
+
+	def admin_list_users(self):
+		attributes = ["email", "given_name", "family_name"]
+		params = {
+			'UserPoolId'      : self.pool_id,
+			'AttributesToGet' : attributes
+		}
+		try:
+			response = self.__get_client().list_users(**params)
+			users = response.copy()
+			users.pop("ResponseMetadata")
+			#print(users)
+			users = users["Users"]
+			num_users = len(users)
+			user_list = []
+			for user in users:
+				user_attributes = self.__cognito_to_dict(user["Attributes"])
+				user_attributes["username"] = user["Username"]
+				user_attributes["creationdate"] = user["UserCreateDate"]
+				user_attributes["modifieddate"] = user["UserLastModifiedDate"]
+				user_attributes["enabled"] = user["Enabled"]
+				user_attributes["status"] = user["UserStatus"]
+				user_list.append(user_attributes)
+
+		except:
+			return (False, None)
+		return (self.__get_result(response), user_list)
+
+
+
+	def admin_display_users(self, users):
+		print()
+		for user in users:
+			print("username       : {}".format(user["username"]))
+			print("  email        : {}".format(user["email"]))
+			print("  given_name   : {}".format(user["given_name"]))
+			print("  family_name  : {}".format(user["family_name"]))
+			print("  creationdate : {}".format(user["creationdate"]))
+			print("  modifieddate : {}".format(user["modifieddate"]))
+			print("  enabled      : {}".format(user["enabled"]))
+			print("  status       : {}".format(user["status"]))
+			print()
+
+	def admin_disable_user(self, username):
+		params = {
+			'UserPoolId' : self.pool_id,
+			'Username'   : username
+		}
+		try:
+			response = self.__get_client().admin_disable_user(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
+	def admin_enable_user(self, username):
+		params = {
+			'UserPoolId' : self.pool_id,
+			'Username'   : username
+		}
+		try:
+			response = self.__get_client().admin_enable_user(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
+	def admin_add_user_to_group(self, username, groupname):
+		params = {
+			'UserPoolId' : self.pool_id,
+			'Username'   : username,
+			'GroupName'  : groupname
+		}
+		try:
+			response = self.__get_client().admin_add_user_to_group(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
+	def admin_remove_user_from_group(self, username, groupname):
+		params = {
+			'UserPoolId' : self.pool_id,
+			'Username'   : username,
+			'GroupName'  : groupname
+		}
+		try:
+			response = self.__get_client().admin_remove_user_from_group(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
+	def admin_list_groups_for_user(self, username):
+		params = {
+			'Username'   : username,
+			'UserPoolId' : self.pool_id
+		}
+		try:
+			response = self.__get_client().admin_list_groups_for_user(**params)
+
+			groups = response.copy()
+			groups.pop("ResponseMetadata")
+			groups = groups["Groups"]
+			#print(groups)
+			num_users = len(groups)
+			group_list = []
+			for group in groups:
+				group_attributes = {}
+				group_attributes["groupname"] = group["GroupName"]
+				group_attributes["description"] = group["Description"]
+				group_attributes["modifieddate"] = group["LastModifiedDate"]
+				group_attributes["creationdate"] = group["CreationDate"]
+				group_list.append(group_attributes)
+		except:
+			return (False, None)
+		return (self.__get_result(response), group_list)
+
+	def admin_display_groups_for_user(self, groups):
+		print()
+		for group in groups:
+			print("groupname      : {}".format(group["groupname"]))
+			print("  description  : {}".format(group["description"]))
+			print("  modifieddate : {}".format(group["modifieddate"]))
+			print("  creationdate : {}".format(group["creationdate"]))
+			print()
