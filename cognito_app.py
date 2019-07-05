@@ -17,12 +17,13 @@ import sys
 #
 # 1. signup
 # 2. confirm signup
-# 3. login, logout
-# 4. update profile
-# 5. initiate forgot password
-# 6. confirm forgot password
-# 7. login_ex (returns access token with id token and refresh token)
-# 8. verify access token which is to be passed for succeeding api calls
+# 3. forgot password
+# 4. config forgot password
+# 5. login
+# 6. get user profile
+# 7. update profile
+# 8. change password
+# 9. verify access token which is to be passed for succeeding api calls
 #
 #####################################################################
 def main(args):
@@ -33,99 +34,110 @@ def main(args):
 	email       = 'richmond.umagat@yahoo.com'
 	username    = 'richmondu'
 	password    = 'P@$$w0rd'
-	first_name  = 'Richi'
-	family_name = 'Umagat'
+	first_name  = 'Lebron'
+	last_name   = 'James'
 	cg = CognitoClient()
 
+
+
 	#################################################################
-	# signup
+	# sign_up
 	# Note: check email for the confirmation code
 	#################################################################
 	if False:
-		cg.signup(email, username, password, first_name, family_name)
+		print("\r\nsign_up")
+		(result, response) = cg.sign_up(username, password, email=email, given_name=first_name, family_name=last_name)
+		print(result)
 
 	#################################################################
-	# confirm signup
+	# confirm sign_up
+	# Note: use confirmation code from email
 	# Note: verify if new user appears in the Users Pool
 	#################################################################
 	if False:
-		confirmation_code = '526558'
-		cg.confirm_signup(username, confirmation_code)
+		print("\r\nconfirm_sign_up")
+		confirmation_code = '237956'
+		(result, response) = cg.confirm_sign_up(username, confirmation_code)
+		print(result)
+
+
 
 	#################################################################
-	# login/logout
+	# forgot password
+	# Note: check email for the confirmation code
 	#################################################################
 	if False:
-		try:
-			(client, tokens) = cg.login(username, password)
-			user = cg.get_user_details(client, username)
-			print(user)
-			cg.logout(client)
-			pass
-		except:
-			print("incorrect username or password")
-
-	#################################################################
-	# update profile
-	#################################################################
-	if False:
-		try:
-			(client, tokens) = cg.login(username, password)
-			user = cg.get_user_details(client, username)
-			print(user)
-			first_name  = 'Richie'
-			family_name = 'Umagat'
-			cg.update_profile(client, first_name, family_name)
-			cg.logout(client)
-			pass
-		except:
-			print("incorrect username or password")
-
-	#################################################################
-	# initiate forgot password
-	#################################################################
-	if False:
-		cg.initiate_forgot_password(username)
+		print("\r\nforgot_password")
+		(result, response) = cg.forgot_password(username)
+		print(result)
 
 	#################################################################
 	# confirm forgot password
+	# Note: use confirmation code from email
 	#################################################################
-	new_password = 'P@$$w0rd'
 	if False:
-		confirmation_code = '385641'
-		cg.confirm_forgot_password(username, confirmation_code, new_password)
+		print("\r\nconfirm_forgot_password")
+		new_password = 'P@$$w0rd'
+		confirmation_code = '847689'
+		(result, response) = cg.confirm_forgot_password(username, confirmation_code, new_password)
+		print(result)
 		password = new_password
 
-	#################################################################
-	# login to test new password
-	#################################################################
-	if False:
-		try:
-			(client, tokens) = cg.login(username, password)
-			cg.logout(client)
-		except:
-			print("incorrect username or password")
-
 
 
 	#################################################################
-	# login using SRP
+	# login
 	#################################################################
 	if True:
-		try:
-			(client, tokens) = cg.login_ex(username, password)
-			print("login successful")
+		print("\r\nlogin")
+		(result, response, client) = cg.login(username, password)
+		print(result)
+		if not result:
+			return
+		access_token = response['AuthenticationResult']['AccessToken']
+		print(access_token)
 
-			id_token = tokens['AuthenticationResult']['IdToken']
-			refresh_token = tokens['AuthenticationResult']['RefreshToken']
-			access_token = tokens['AuthenticationResult']['AccessToken']
-			print("AccessToken:  \r\n{}\r\n".format(access_token))
+		#################################################################
+		# get user profile
+		#################################################################
+		if True:
+			print("\r\nget_user")
+			(result, user_attributes) = cg.get_user(access_token)
+			print(result)
+			print(user_attributes)
 
-			keys = cg.get_userpool_keys()
-			valid = cg.is_token_valid(username, access_token, keys)
+		#################################################################
+		# update user profile
+		#################################################################
+		if True:
+			print("\r\nupdate_user")
+			first_name = "Lebron"
+			last_name  = "James"
+			(result, response) = cg.update_user(access_token, email=email, given_name=first_name, family_name=last_name)
+			print(result)
+			(result, user_attributes) = cg.get_user(access_token)
+			print(result)
+			print(user_attributes)
+
+		#################################################################
+		# change user password
+		#################################################################
+		if True:
+			print("\r\nchange_password")
+			new_password = 'P@$$w0rd'
+			(result, response) = cg.change_password(access_token, password, new_password)
+			if not result and password == new_password:
+				result = True
+			print(result)
+
+		#################################################################
+		# verify token
+		#################################################################
+		if True:
+			print("\r\nverify_token")
+			valid = cg.verify_token(access_token, username)
 			print("token is {}!".format("valid" if valid else "invalid"))
-		except:
-			print("incorrect username or password")
+
 
 
 def parse_arguments(argv):
