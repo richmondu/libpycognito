@@ -41,7 +41,7 @@ def test_user():
 	#################################################################
 	if False:
 		print("\r\nconfirm_sign_up")
-		confirmation_code = '237956'
+		confirmation_code = '950558'
 		(result, response) = cg.confirm_sign_up(username, confirmation_code)
 		print(result)
 
@@ -249,7 +249,7 @@ def test_admin():
 		#################################################################
 		# delete user
 		#################################################################
-		if True:
+		if False:
 			print("\r\nadmin_delete_user")
 			username = "richmondu"
 			(result, response) = cg.admin_delete_user(username)
