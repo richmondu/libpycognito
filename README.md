@@ -12,7 +12,7 @@ That part should be quite easy since it is just UI.
 
 ### Features:
 
-        user
+	user
 	1. signup (will receive email containing confirmation code)
 	2. confirm signup (use confirmation code)
 	3. forgot password (will receive email containing confirmation code)
