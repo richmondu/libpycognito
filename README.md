@@ -14,12 +14,13 @@ That part should be quite easy since it is just UI.
 
 	1. signup (will receive email containing confirmation code)
 	2. confirm signup (use confirmation code)
-	3. login, logout
-	4. update profile
-	5. initiate forgot password (will receive email containing confirmation code)
-	6. confirm forgot password (use confirmation code)
-	7. login_ex (returns access token with id token and refresh token)
-	8. verify access token which is to be passed for succeeding api calls
+	3. forgot password (will receive email containing confirmation code)
+	4. config forgot password (use confirmation code)
+	5. login (will return access token)
+	6. get user profile (use access token)
+	7. update profile (use access token)
+	8. change password (use access token)
+	9. verify access token which is to be passed for succeeding api calls
 
 
 ### Instructions:
