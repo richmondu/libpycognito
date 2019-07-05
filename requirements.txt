@@ -1,3 +1,4 @@
+boto3
 warrant==0.6.1
 jose==1.0.0
 argparse==1.4.0
