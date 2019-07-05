@@ -24,6 +24,7 @@ import sys
 # 7. update profile (use access token)
 # 8. change password (use access token)
 # 9. verify access token which is to be passed for succeeding api calls
+# 10. logout
 #
 #####################################################################
 def main(args):
@@ -95,7 +96,11 @@ def main(args):
 		if not result:
 			return
 		access_token = response['AuthenticationResult']['AccessToken']
+		refresh_token = response['AuthenticationResult']['RefreshToken']
+		id_token = response['AuthenticationResult']['IdToken']
 		print(access_token)
+		#print(refresh_token)
+		#print(id_token)
 
 		#################################################################
 		# get user profile
@@ -138,6 +143,13 @@ def main(args):
 			valid = cg.verify_token(access_token, username)
 			print("token is {}!".format("valid" if valid else "invalid"))
 
+		#################################################################
+		# logout
+		#################################################################
+		if True:
+			print("\r\nlogout")
+			(result, response) = cg.logout(access_token)
+			print(result)
 
 
 def parse_arguments(argv):

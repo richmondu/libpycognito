@@ -123,6 +123,16 @@ class CognitoClient:
 			return (False, None, None)
 		return (self.__get_result(response), response, client)
 
+	def logout(self, access_token):
+		params = {
+			'AccessToken': access_token
+		}
+		try:
+			response = self.__get_client().global_sign_out(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
 	def get_user(self, access_token):
 		params = {
 			'AccessToken': access_token
@@ -214,12 +224,5 @@ class CognitoClient:
 			print('Token was not issued for this pool_id')
 			return False
 		return True
-
-	def logout(self, client):
-		pass
-
-
-
-
 
 
