@@ -20,7 +20,6 @@ class CognitoClient:
 		import json
 		keys_iss = 'https://cognito-idp.{}.amazonaws.com/{}'.format(config.CONFIG_USER_POOL_REGION, config.CONFIG_USER_POOL_ID)
 		keys_url = '{}/.well-known/jwks.json'.format(keys_iss)
-		print(keys_url)
 		response = urllib.request.urlopen(keys_url)
 		keys = json.loads(response.read())['keys']
 		return keys, keys_iss
