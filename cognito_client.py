@@ -15,17 +15,11 @@ class CognitoClient:
 		self.keys        = None
 		self.keys_iss    = None
 
-	def __get_userpool_keys(self):
-		import urllib.request
-		import json
-		keys_iss = 'https://cognito-idp.{}.amazonaws.com/{}'.format(config.CONFIG_USER_POOL_REGION, config.CONFIG_USER_POOL_ID)
-		keys_url = '{}/.well-known/jwks.json'.format(keys_iss)
-		response = urllib.request.urlopen(keys_url)
-		keys = json.loads(response.read())['keys']
-		return keys, keys_iss
-
 	def __get_client(self):
 		return boto3.Session(region_name=self.pool_region).client('cognito-idp')
+
+	def __get_result(self, response):
+		return True if response["ResponseMetadata"]["HTTPStatusCode"] == 200 else False
 
 	def __dict_to_cognito(self, attributes, attr_map=None):
 		if attr_map is None:
@@ -48,8 +42,14 @@ class CognitoClient:
 			attr_dict[name] = value
 		return attr_dict
 
-	def __get_result(self, response):
-		return True if response["ResponseMetadata"]["HTTPStatusCode"] == 200 else False
+	def __get_userpool_keys(self):
+		import urllib.request
+		import json
+		keys_iss = 'https://cognito-idp.{}.amazonaws.com/{}'.format(config.CONFIG_USER_POOL_REGION, config.CONFIG_USER_POOL_ID)
+		keys_url = '{}/.well-known/jwks.json'.format(keys_iss)
+		response = urllib.request.urlopen(keys_url)
+		keys = json.loads(response.read())['keys']
+		return keys, keys_iss
 
 
 
@@ -106,8 +106,6 @@ class CognitoClient:
 
 
 
-
-
 	def login(self, username, password):
 		client = self.__get_client()
 		params = {
@@ -160,6 +158,8 @@ class CognitoClient:
 		except:
 			return (False, None)
 		return (self.__get_result(response), response)
+
+
 
 	def verify_token(self, token, username):
 		from jose import jwk, jwt
