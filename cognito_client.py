@@ -1,71 +1,168 @@
-from warrant import Cognito
+import boto3
+from warrant.aws_srp import AWSSRP
 from cognito_config import config
 import time
+import ast
 
 
 
 class CognitoClient:
 
 	def __init__(self):
-		pass
+		self.client_id   = config.CONFIG_CLIENT_ID
+		self.pool_id     = config.CONFIG_USER_POOL_ID
+		self.pool_region = config.CONFIG_USER_POOL_REGION
+		self.keys        = None
+		self.keys_iss    = None
 
-	def signup(self, email, username, password, first_name, family_name):
-		client = Cognito(config.CONFIG_USER_POOL_ID, config.CONFIG_CLIENT_ID, user_pool_region=config.CONFIG_USER_POOL_REGION)
-		client.add_base_attributes(email=email, given_name=first_name, family_name=family_name)
-		response = client.register(username, password)
-		print(response)
-
-	def confirm_signup(self, username, confirmation_code):
-		client = Cognito(config.CONFIG_USER_POOL_ID, config.CONFIG_CLIENT_ID, user_pool_region=config.CONFIG_USER_POOL_REGION)
-		client.confirm_sign_up(confirmation_code, username=username)
-
-	def login(self, username, password):
-		client = Cognito(config.CONFIG_USER_POOL_ID, config.CONFIG_CLIENT_ID, user_pool_region=config.CONFIG_USER_POOL_REGION, username=username)
-		client.authenticate(password=password)
-		#client.admin_authenticate(password=password)
-		return (client, None)
-
-	def login_ex(self, username, password):
-		import boto3
-		from warrant.aws_srp import AWSSRP
-		client = boto3.Session(region_name=config.CONFIG_USER_POOL_REGION).client('cognito-idp')
-		aws = AWSSRP(username=username, password=password, pool_id=config.CONFIG_USER_POOL_ID, client_id=config.CONFIG_CLIENT_ID, client=client)
-		tokens = aws.authenticate_user()
-		return (client, tokens)
-
-	def get_user_details(self, client, username):
-	#	return client.get_user()
-		return client.get_user_obj(username=username,
-			attribute_list=[{'Name': 'string','Value': 'string'},],
-			metadata={},
-			attr_map={"given_name":"given_name","family_name":"family_name", }
-			)
-
-	def update_profile(self, client, first_name, family_name):
-		client.update_profile({'given_name':first_name,'family_name':family_name, },attr_map=dict())
-
-	def logout(self, client):
-		client.logout()
-
-	def initiate_forgot_password(self, username):
-		client = Cognito(config.CONFIG_USER_POOL_ID, config.CONFIG_CLIENT_ID, user_pool_region=config.CONFIG_USER_POOL_REGION, username=username)
-		client.initiate_forgot_password()
-
-	def confirm_forgot_password(self, username, confirmation_code, new_password):
-		client = Cognito(config.CONFIG_USER_POOL_ID, config.CONFIG_CLIENT_ID, user_pool_region=config.CONFIG_USER_POOL_REGION, username=username)
-		client.confirm_forgot_password(confirmation_code, new_password)
-
-
-
-	def get_userpool_keys(self):
+	def __get_userpool_keys(self):
 		import urllib.request
 		import json
-		keys_url = 'https://cognito-idp.{}.amazonaws.com/{}/.well-known/jwks.json'.format(config.CONFIG_USER_POOL_REGION, config.CONFIG_USER_POOL_ID)
+		keys_iss = 'https://cognito-idp.{}.amazonaws.com/{}'.format(config.CONFIG_USER_POOL_REGION, config.CONFIG_USER_POOL_ID)
+		keys_url = '{}/.well-known/jwks.json'.format(keys_iss)
+		print(keys_url)
 		response = urllib.request.urlopen(keys_url)
 		keys = json.loads(response.read())['keys']
-		return keys
+		return keys, keys_iss
 
-	def is_token_valid(self, username, token, keys):
+	def __get_client(self):
+		return boto3.Session(region_name=self.pool_region).client('cognito-idp')
+
+	def __dict_to_cognito(self, attributes, attr_map=None):
+		if attr_map is None:
+			attr_map = {}
+		for k,v in attr_map.items():
+			if v in attributes.keys():
+				attributes[k] = attributes.pop(v)
+		return [{'Name': key, 'Value': value} for key, value in attributes.items()]
+
+	def __cognito_to_dict(self, attr_list, attr_map=None):
+		if attr_map is None:
+			attr_map = {}
+		attr_dict = dict()
+		for a in attr_list:
+			name = a.get('Name')
+			value = a.get('Value')
+			if value in ['true', 'false']:
+				value = ast.literal_eval(value.capitalize())
+			name = attr_map.get(name,name)
+			attr_dict[name] = value
+		return attr_dict
+
+	def __get_result(self, response):
+		return True if response["ResponseMetadata"]["HTTPStatusCode"] == 200 else False
+
+
+
+	def sign_up(self, username, password, **attributes):
+		params = {
+			'ClientId'       : self.client_id,
+			'Username'       : username,
+			'Password'       : password,
+			'UserAttributes' : self.__dict_to_cognito(attributes)
+		}
+		try:
+			response = self.__get_client().sign_up(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
+	def confirm_sign_up(self, username, confirmation_code):
+		params = {
+			'ClientId'        : self.client_id,
+			'Username'        : username,
+			'ConfirmationCode': confirmation_code
+		}
+		try:
+			response = self.__get_client().confirm_sign_up(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
+
+
+	def forgot_password(self, username):
+		params = {
+			'ClientId': self.client_id,
+			'Username': username
+		}
+		try:
+			response = self.__get_client().forgot_password(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
+	def confirm_forgot_password(self, username, confirmation_code, new_password):
+		params = {
+			'ClientId'        : self.client_id,
+			'Username'        : username,
+			'ConfirmationCode': confirmation_code,
+			'Password'        : new_password
+		}
+		try:
+			response = self.__get_client().confirm_forgot_password(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
+
+
+
+
+	def login(self, username, password):
+		client = self.__get_client()
+		params = {
+			'username'  : username,
+			'password'  : password,
+			'pool_id'   : self.pool_id,
+			'client_id' : self.client_id,
+			'client'    : client
+		}
+		try:
+			aws = AWSSRP(**params)
+			response = aws.authenticate_user()
+			(self.keys, self.keys_iss) = self.__get_userpool_keys()
+		except:
+			return (False, None, None)
+		return (self.__get_result(response), response, client)
+
+	def get_user(self, access_token):
+		params = {
+			'AccessToken': access_token
+		}
+		try:
+			response = self.__get_client().get_user(**params)
+			user_attributes = self.__cognito_to_dict(response["UserAttributes"])
+			user_attributes.pop("sub")
+			user_attributes.pop("email_verified")
+		except:
+			return (False, None)
+		return (self.__get_result(response), user_attributes)
+
+	def update_user(self, access_token, **attributes):
+		params = {
+			'AccessToken'    : access_token,
+			'UserAttributes' : self.__dict_to_cognito(attributes)
+		}
+		try:
+			response = self.__get_client().update_user_attributes(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+	
+	def change_password(self, access_token, password, new_password):
+		params = {
+			'PreviousPassword': password,
+			'ProposedPassword': new_password,
+			'AccessToken'     : access_token
+		}
+		try:
+			response = self.__get_client().change_password(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
+	def verify_token(self, token, username):
 		from jose import jwk, jwt
 		from jose.utils import base64url_decode
 
@@ -75,8 +172,8 @@ class CognitoClient:
 
 		# search for the kid in the downloaded public keys
 		key_index = -1
-		for i in range(len(keys)):
-			if kid == keys[i]['kid']:
+		for i in range(len(self.keys)):
+			if kid == self.keys[i]['kid']:
 				key_index = i
 				break
 		if key_index == -1:
@@ -84,7 +181,7 @@ class CognitoClient:
 			return False
 
 		# construct the public key
-		public_key = jwk.construct(keys[key_index])
+		public_key = jwk.construct(self.keys[key_index])
 
 		# get the last two sections of the token,
 		# message and signature (encoded in base64)
@@ -92,6 +189,7 @@ class CognitoClient:
 
 		# decode the signature
 		decoded_signature = base64url_decode(encoded_signature.encode('utf-8'))
+
 		# verify the signature
 		if not public_key.verify(message.encode("utf8"), decoded_signature):
 			print('Signature verification failed')
@@ -113,4 +211,16 @@ class CognitoClient:
 		if claims["username"] != username:
 			print('Token was not issued for this username')
 			return False
+		if claims['iss'] != self.keys_iss:
+			print('Token was not issued for this pool_id')
+			return False
 		return True
+
+	def logout(self, client):
+		pass
+
+
+
+
+
+
