@@ -360,4 +360,15 @@ class CognitoClient:
 			return (False, None)
 		return (self.__get_result(response), response)
 
+	def admin_delete_user(self, username):
+		params = {
+			'UserPoolId': self.pool_id,
+			'Username'  : username
+		}
+		try:
+			response = self.__get_client().admin_delete_user(**params)
+		except:
+			return (False, None)
+		return (self.__get_result(response), response)
+
 

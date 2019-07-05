@@ -32,6 +32,7 @@ That part should be quite easy since it is just UI.
 	5. add user to group (users who upgraded from free-tier can be transferred to subscription-tier group)
 	6. remove user from group
 	7. logout a user
+	8. delete user
 
 
 ### Instructions:

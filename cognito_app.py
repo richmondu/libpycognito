@@ -246,6 +246,16 @@ def test_admin():
 			print(result)
 
 
+		#################################################################
+		# delete user
+		#################################################################
+		if True:
+			print("\r\nadmin_delete_user")
+			username = "richmondu"
+			(result, response) = cg.admin_delete_user(username)
+			print(result)
+
+
 
 #####################################################################
 #
@@ -271,6 +281,7 @@ def test_admin():
 # 5. add user to group (users who upgraded from free-tier can be transferred to subscription-tier group)
 # 6. remove user from group
 # 7. logout a user
+# 8. delete user
 #
 #####################################################################
 def main(args):
