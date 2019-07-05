@@ -39,10 +39,10 @@ That part should be quite easy since it is just UI.
        K. Click "Next step"
        L. Click "Create pool"
        
-    2. Update cognito_config.py
-	      A. CONFIG_USER_POOL_REGION = Region of Cognito User Pool ex. "ap-southeast-1"
-	      B. CONFIG_USER_POOL_ID     = Copy from General settings/Pool Id
-	      C. CONFIG_CLIENT_ID        = Copy from General settings/App clients/App client id
+    2. Update 
+       A. CONFIG_USER_POOL_REGION = Region of Cognito User Pool ex. "ap-southeast-1"
+       B. CONFIG_USER_POOL_ID     = Copy from General settings/Pool Id
+       C. CONFIG_CLIENT_ID        = Copy from General settings/App clients/App client id
     
     3. Install Python libraries
        pip install -r requirements.txt
