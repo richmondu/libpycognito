@@ -15,14 +15,14 @@ import sys
 #
 # Demonstrate Amazon Cognito in console
 #
-# 1. signup
-# 2. confirm signup
-# 3. forgot password
-# 4. config forgot password
-# 5. login
-# 6. get user profile
-# 7. update profile
-# 8. change password
+# 1. signup (will receive email containing confirmation code)
+# 2. confirm signup (use confirmation code)
+# 3. forgot password (will receive email containing confirmation code)
+# 4. config forgot password (use confirmation code)
+# 5. login (will return access token)
+# 6. get user profile (use access token)
+# 7. update profile (use access token)
+# 8. change password (use access token)
 # 9. verify access token which is to be passed for succeeding api calls
 #
 #####################################################################
